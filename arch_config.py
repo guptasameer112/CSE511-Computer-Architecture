@@ -1,7 +1,7 @@
 # Heavily inspired by Gem5X Onchip wireless cache implementation
 
 # Configure the M5 cache hierarchy config in one place
-#
+#https://github.com/gem5-X/On-Chip-Wireless/blob/master/gem5-X-wireless/configs/example/fs_wirelessExample.py
 
 from __future__ import print_function
 

@@ -1,7 +1,7 @@
 # Heavily inspired by Gem5X Onchip wireless cache implementation
 
 # Configure the M5 cache hierarchy config in one place
-#
+# https://github.com/gem5-X/On-Chip-Wireless/blob/master/gem5-X-wireless/configs/common/CacheConfig_wirelessExample.py
 
 from __future__ import print_function
 
@@ -96,7 +96,6 @@ def config_cache(options, system):
             # When connecting the caches, the clock is also inherited
             # from the CPU in question
            
-            # if True:
             system.cpu[i].addPrivateSplitL1Caches(icache, dcache,
                                                     iwalkcache, dwalkcache)
 
