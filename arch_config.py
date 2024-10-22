@@ -1,45 +1,7 @@
-# Copyright (c) 2010-2013, 2016 ARM Limited
-# All rights reserved.
+# Heavily inspired by Gem5X Onchip wireless cache implementation
+
+# Configure the M5 cache hierarchy config in one place
 #
-# The license below extends only to copyright in the software and shall
-# not be construed as granting a license to any other intellectual
-# property including but not limited to intellectual property relating
-# to a hardware implementation of the functionality of the software
-# licensed hereunder.  You may use the software subject to the license
-# terms below provided that you ensure that this notice is replicated
-# unmodified and in its entirety in all distributions of the software,
-# modified or unmodified, in source code or in binary form.
-#
-# Copyright (c) 2012-2014 Mark D. Hill and David A. Wood
-# Copyright (c) 2009-2011 Advanced Micro Devices, Inc.
-# Copyright (c) 2006-2007 The Regents of The University of Michigan
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met: redistributions of source code must retain the above copyright
-# notice, this list of conditions and the following disclaimer;
-# redistributions in binary form must reproduce the above copyright
-# notice, this list of conditions and the following disclaimer in the
-# documentation and/or other materials provided with the distribution;
-# neither the name of the copyright holders nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# Authors: Ali Saidi
-#          Brad Beckmann
 
 from __future__ import print_function
 
@@ -54,7 +16,7 @@ from m5.util.fdthelper import *
 
 addToPath('../')
 
-from ruby import Ruby
+# from ruby import Ruby
 
 from common.FSConfig import *
 from common.SysPaths import *
@@ -87,16 +49,7 @@ def cmd_line_template():
 
 def build_test_system(np):
     cmdline = cmd_line_template()
-    # if buildEnv['TARGET_ISA'] == "alpha":
-    #     test_sys = makeLinuxAlphaSystem(test_mem_mode, bm[0], options.ruby,
-    #                                     cmdline=cmdline)
-    # elif buildEnv['TARGET_ISA'] == "mips":
-    #     test_sys = makeLinuxMipsSystem(test_mem_mode, bm[0], cmdline=cmdline)
-    # elif buildEnv['TARGET_ISA'] == "sparc":
-    #     test_sys = makeSparcSystem(test_mem_mode, bm[0], cmdline=cmdline)
-    # elif buildEnv['TARGET_ISA'] == "x86":
-    #     test_sys = makeLinuxX86System(test_mem_mode, options.num_cpus, bm[0],
-    #             options.ruby, cmdline=cmdline)
+ 
     if buildEnv['TARGET_ISA'] == "arm":
         test_sys = makeArmSystem(test_mem_mode, options.machine_type,
                                  options.membus_width, options,
@@ -152,40 +105,6 @@ def build_test_system(np):
     if is_kvm_cpu(TestCPUClass) or is_kvm_cpu(FutureClass):
         test_sys.kvm_vm = KvmVM()
 
-    # if options.ruby:
-    #     bootmem = getattr(test_sys, 'bootmem', None)
-    #     Ruby.create_system(options, True, test_sys, test_sys.iobus,
-    #                        test_sys._dma_ports, bootmem)
-
-    #     # Create a seperate clock domain for Ruby
-    #     test_sys.ruby.clk_domain = SrcClockDomain(clock = options.ruby_clock,
-    #                                     voltage_domain = test_sys.voltage_domain)
-
-    #     # Connect the ruby io port to the PIO bus,
-    #     # assuming that there is just one such port.
-    #     test_sys.iobus.master = test_sys.ruby._io_port.slave
-
-    #     for (i, cpu) in enumerate(test_sys.cpu):
-    #         #
-    #         # Tie the cpu ports to the correct ruby system ports
-    #         #
-    #         cpu.clk_domain = test_sys.cpu_clk_domain
-    #         cpu.createThreads()
-    #         cpu.createInterruptController()
-
-    #         cpu.icache_port = test_sys.ruby._cpu_ports[i].slave
-    #         cpu.dcache_port = test_sys.ruby._cpu_ports[i].slave
-
-    #         if buildEnv['TARGET_ISA'] in ("x86", "arm"):
-    #             cpu.itb.walker.port = test_sys.ruby._cpu_ports[i].slave
-    #             cpu.dtb.walker.port = test_sys.ruby._cpu_ports[i].slave
-
-    #         if buildEnv['TARGET_ISA'] in "x86":
-    #             cpu.interrupts[0].pio = test_sys.ruby._cpu_ports[i].master
-    #             cpu.interrupts[0].int_master = test_sys.ruby._cpu_ports[i].slave
-    #             cpu.interrupts[0].int_slave = test_sys.ruby._cpu_ports[i].master
-
-    # else:
     if options.caches or options.l2cache:
         # By default the IOCache runs at the system clock
         test_sys.iocache = IOCache(addr_ranges = test_sys.mem_ranges)
@@ -263,15 +182,7 @@ def build_drive_system(np):
     DriveMemClass = SimpleMemory
 
     cmdline = cmd_line_template()
-    if buildEnv['TARGET_ISA'] == 'alpha':
-        drive_sys = makeLinuxAlphaSystem(drive_mem_mode, bm[1], cmdline=cmdline)
-    elif buildEnv['TARGET_ISA'] == 'mips':
-        drive_sys = makeLinuxMipsSystem(drive_mem_mode, bm[1], cmdline=cmdline)
-    elif buildEnv['TARGET_ISA'] == 'sparc':
-        drive_sys = makeSparcSystem(drive_mem_mode, bm[1], cmdline=cmdline)
-    elif buildEnv['TARGET_ISA'] == 'x86':
-        drive_sys = makeLinuxX86System(drive_mem_mode, np, bm[1],
-                                       cmdline=cmdline)
+
     if buildEnv['TARGET_ISA'] == 'arm':
         drive_sys = makeArmSystem(drive_mem_mode, options.machine_type, np,
                                   bm[1], options.dtb_filename, cmdline=cmdline,
@@ -327,10 +238,6 @@ Options.addCommonOptions(parser)
 Options.addFSOptions(parser)
 Options.addSPMOptions(parser)
 Options.addWirelessXBarOptions(parser)
-
-# Add the ruby specific and protocol specific options
-if '--ruby' in sys.argv:
-    Ruby.define_options(parser)
 
 (options, args) = parser.parse_args()
 
