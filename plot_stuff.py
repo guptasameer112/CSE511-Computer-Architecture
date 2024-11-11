@@ -3,9 +3,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 from typing import List
 
-def plot_stuff(dirs: List[str]):
-    expoff_x, expoff_y = get_data(dirs[0])
-    tp_x, tp_y = get_data(dirs[1])
+def plot_stuff(dirs: List[str], req_data: str):
+    expoff_x, expoff_y = get_data(dirs[0], req_data)
+    tp_x, tp_y = get_data(dirs[1], req_data)
     
     plt.plot(expoff_x, expoff_y, marker='v', linestyle='-', label="expoff", color="#6da8ca")
     plt.plot(tp_x, tp_y, marker="s", linestyle="-", label="token_passing", color="#82c98b")
@@ -16,8 +16,23 @@ def plot_stuff(dirs: List[str]):
     plt.legend()
     plt.savefig("exec_time.png", dpi=300)
 
-
-def get_data(dirname: str):
+def plot_packets(dirs: List[str], req_data: str):
+    expoff_x, expoff_y = get_data(dirs[0], req_data)
+    tp_x, tp_y = get_data(dirs[1], req_data)
+    
+    expoff_y = np.divide(expoff_y, 64)
+    tp_y = np.divide(tp_y, 64)
+    
+    plt.plot(expoff_x, expoff_y, marker='v', linestyle='-', label="expoff", color="#6da8ca")
+    plt.plot(tp_x, tp_y, marker="s", linestyle="-", label="token_passing", color="#82c98b")
+    plt.title("Packets Exchanged Across Wireless Interconnect")
+    plt.xlabel('Wireless Channel Bandwidth (GB/s)')
+    plt.ylabel('Number of 64B transmissions')
+    
+    plt.legend()
+    plt.savefig("transmissions.png", dpi=300)
+    
+def get_data(dirname: str, req_data: str):
     # get them files
     folder = Path('output/' + dirname)
     files = list(folder.iterdir())
@@ -30,7 +45,7 @@ def get_data(dirname: str):
         # open that thang
         with file.open() as f:
             for line in f:
-                if "host_seconds" in line:
+                if req_data in line:
                     bandwidth = str(file).split("GHZ")[1].split(".txt")[0]
                     # correction for 12.5 GB/s case
                     if bandwidth == "12_5":
@@ -51,4 +66,7 @@ def get_data(dirname: str):
     
     return x_sorted, y_sorted
                 
-plot_stuff(["per_core/expoff", "per_core/token_pass"])
+plot_stuff(["per_core/expoff", "per_core/token_pass"], "host_seconds")
+plt.close("all")
+plt.rcdefaults()
+plot_packets(["per_core/expoff", "per_core/token_pass"], "system.membus.pkt_size::total")
