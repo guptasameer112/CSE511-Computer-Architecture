@@ -110,7 +110,7 @@ system.mem_ctrls.bw_total::cpu0.itb.walker       107719                       # 
 system.mem_ctrls.bw_total::cpu0.inst         14121561                       # Total bandwidth to/from this memory (bytes/s)
 system.mem_ctrls.bw_total::cpu0.data        131948562                       # Total bandwidth to/from this memory (bytes/s)
 system.mem_ctrls.bw_total::pci_ide                130                       # Total bandwidth to/from this memory (bytes/s)
-system.mem_ctrls.bw_total::total            376048068                       # Total bandwidth to/from this memory (bytes/s)
+system.mem_ctrls.bw_total::total            376664802                       # Total bandwidth to/from this memory (bytes/s)
 system.mem_ctrls.readReqs                           0                       # Number of read requests accepted
 system.mem_ctrls.writeReqs                          0                       # Number of write requests accepted
 system.mem_ctrls.readBursts                         0                       # Number of DRAM read bursts, including those serviced by the write queue
